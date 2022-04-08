@@ -1,5 +1,4 @@
-# Compiler
+# OSD - Python Code Interview
+- https://osd-python.herokuapp.com
 
-A web application which can compile and run C,C++,Java,Python languages.
-
-### Link :-  [Compiler](http://itsprakash87-ide.herokuapp.com)
+- [@ngocnhan2003](https://ngocnhan2003.github.io)

@@ -8,25 +8,9 @@ if(isset($_SESSION['changed']) && ($_SESSION['changed'] == true)){
 }
 
 else{
-	// Include the compiler script according to the selected language.
 	if(isset($_POST['compile'])){
-
-		if(isset($_POST['language'])){
-			if($_POST['language'] == "c"){
-				include_once('compilers/compiler_c.php');
-			}
-
-			else if($_POST['language'] == "cpp"){
-				include_once('compilers/compiler_cpp.php');
-			}
-
-			else if($_POST['language'] == "java"){
-				include_once('compilers/compiler_java.php');
-			}
-
-			else if($_POST['language'] == "python"){
-				include_once('compilers/compiler_python.php');
-			}
+		if(isset($_POST['problem'])){
+			include_once('compilers/compiler_python.php');
 		}
 		unset($_POST['compile']);
 	}
@@ -36,7 +20,7 @@ else{
 
 <html>
 <head>
-	<title>All in one compiler</title>
+	<title>OSD - Python Code Interview</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- Include script and styles for the code editor and web page. -->
 	<link rel="stylesheet" href="css/bootstrap.css">
@@ -45,9 +29,10 @@ else{
 	<link rel="stylesheet" href="codemirror/addon/dialog/dialog.css">
 	<link rel="stylesheet" href="codemirror/theme/monokai.css">
 	<link rel="stylesheet" href="codemirror/theme/twilight.css">
+	<link rel="stylesheet" href="css/main.css">
+
 	<script src="codemirror/lib/codemirror.js"></script>
 	<script src="codemirror/addon/selection/active-line.js"></script>
-
 	<script src="codemirror/addon/search/searchcursor.js"></script>
 	<script src="codemirror/addon/search/search.js"></script>
 	<script src="codemirror/addon/dialog/dialog.js"></script>
@@ -63,33 +48,28 @@ else{
 	<script src="codemirror/keymap/sublime.js"></script>
 	
 
-	<style type="text/css">
-      .CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;height: 95%;}
-      header{text-align: center;}
-      .side-content{	padding: 10px 5px;}
-    </style>
-
-	<!-- Use ajax to change the language on language option change. -->
-	<script type="text/javascript">
-		
-		function changeLanguage() {
-		  var str = document.getElementById("language").value;
+	<script type="text/javascript">		
+		function changeProblem() {
+		  var str = document.getElementById("problem").value;
 		  var xhttp = new XMLHttpRequest();
 		  xhttp.onreadystatechange = function() {
 		    if (xhttp.readyState == 4 && xhttp.status == 200) {
 		    	window.location.reload(true); 
 		    }
 		  };
-		  xhttp.open("POST", "ajax/change_language.php?q="+str, true);
+		  xhttp.open("POST", "ajax/change_problem.php?q="+str, true);
 		  xhttp.send();
 		}
 	</script>
+
 </head>
-<body>
+<body class="bg-dark">
 	<div class="container-fluid">
 
 		<header>
-			<div class="well"><h2>All in one Compiler</h2></div>
+			<div class="wellwell">
+				<h2>OSD - Python Code Interview</h2>
+			</div>
 		</header>
 		<div class="result">
 		<?php
@@ -123,66 +103,21 @@ else{
 			
 				<div class="row">
 					<div class="col-sm-9">
-						<?php
-						if (isset($_SESSION['selected_language']) && $_SESSION['selected_language'] == "java"){
-									echo "Public class name should be 'testfile_java'";
-							}
-						?>
 					<textarea rows="40" cols="170" name="program" class="program" id="code"><?php 
-						if(isset($_SESSION['selected_language'])){
-							// Load the last compiled program, if any, of the selected language.
-							if(isset($_SESSION['c_program']) && ($_SESSION['selected_language'] == "c")){
-								echo $_SESSION['c_program'];
-							}
-							else if(isset($_SESSION['cpp_program']) && ($_SESSION['selected_language'] == "cpp")){
-								echo $_SESSION['cpp_program'];
-							}
-							else if(isset($_SESSION['java_program']) && ($_SESSION['selected_language'] == "java")){
-								echo $_SESSION['java_program'];
-							}
-							else if(isset($_SESSION['python_program']) && ($_SESSION['selected_language'] == "python")){
+							if(isset($_SESSION['python_program'])){
 								echo $_SESSION['python_program'];
-							}
-							else{
+							} else {
 								echo "";
 							}
-						}
-						else{
-							$_SESSION['selected_language'] = "c";
-							echo "";
-						}
-						
 						?></textarea>
 					</div>
 			
 
 					<div class="col-sm-3 side-content">
 						<div class="form-group">
-							<select name="language" onchange="changeLanguage()" id="language" class="form-control">
-								<?php if(!isset($_SESSION['selected_language']) || $_SESSION['selected_language'] == "c"){?>
-									<option value="c" selected> C </option>
-									<option value="cpp"> C++ </option>
-									<option value="java"> Java </option>
-									<option value="python"> Python </option>
-								<?php } ?>
-								<?php if($_SESSION['selected_language'] == "cpp"){?>
-									<option value="c"> C </option>
-									<option value="cpp" selected> C++ </option>
-									<option value="java"> Java </option>
-									<option value="python"> Python </option>
-								<?php } ?>
-								<?php if($_SESSION['selected_language'] == "java"){?>
-									<option value="c"> C </option>
-									<option value="cpp"> C++ </option>
-									<option value="java" selected> Java </option>
-									<option value="python"> Python </option>
-								<?php } ?>
-								<?php if($_SESSION['selected_language'] == "python"){?>
-									<option value="c"> C </option>
-									<option value="cpp"> C++ </option>
-									<option value="java"> Java </option>
-									<option value="python" selected> Python </option>
-								<?php } ?>
+							<select name="problem" onchange="changeProblem()" id="problem" class="form-control">
+								<option value="e1p1" selected> Problem 1 </option>
+								<option value="e1p2"> Problem 2 </option>
 							</select>
 						</div>
 
@@ -209,20 +144,11 @@ else{
 		    styleActiveLine: true,
 		    lineNumbers: true,
 		    lineWrapping: true,
-		    <?php if(($_SESSION['selected_language'] == "c")){
-		    	echo "mode: 'text/x-csrc',";
-		     }?>
-		    <?php if(($_SESSION['selected_language'] == "cpp")){
-		    	echo "mode: 'text/x-c++src',";
-		     }?>
-		    <?php if(($_SESSION['selected_language'] == "java")){
-		    	echo "mode: 'text/x-java',";
-		     }?>
-		     <?php if(($_SESSION['selected_language'] == "python")){
-		    	echo "mode: {name: 'text/x-cython',
-               				version: 2,
-               				singleLineStringErrors: false},";
-		     }?>
+		    mode: {
+					name: 'text/x-cython',
+					version: 3,
+					singleLineStringErrors: false
+				},
 		    keyMap: "sublime",
 		    autoCloseBrackets: true,
 		    matchBrackets: true,

@@ -9,7 +9,7 @@
 	$inputTxt = $_POST['input'];
 	fwrite($input, $inputTxt);
 
-	$compile = exec('python programs/python/testfile_python.py < programs/python/input_python.txt 2>&1',$ar,$exit_status);
+	$compile = exec('python3 programs/python/testfile_python.py < programs/python/input_python.txt 2>&1',$ar,$exit_status);
 	$str = "";
 	if($exit_status == 0){
 		// if compiled successfully, save output.
